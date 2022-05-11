@@ -39,8 +39,8 @@ def generatePopulation(items, pop_size, W_max):
         rep = np.zeros(32, dtype=int)
         while calcWeight(rep, items, W_max) < 0.7 * W_max:  # first representants not the best, only around 70% good
             rep[np.random.randint(len(items))] = 1
-        population.append(rep)
-        print(calcValue(rep, items))
+        population.append([calcValue(rep, items), rep])
+        # print(calcValue(rep, items))
     return population
 
 
