@@ -13,7 +13,7 @@ def generatePopulation(N):
         pop_p[i][0] = np.round(pop_p[i][0])
         chap = [pop_weights[i][0], pop_p[i][0]]
         pop.append(chap)
-    print(pop)
+    # print(pop)
     return pop
 
 if __name__ == "__main__":
