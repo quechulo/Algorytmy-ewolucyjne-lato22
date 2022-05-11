@@ -18,17 +18,21 @@ def generateItems(N):
     return items
 
 
-def calcWeight(rep, items, W_max):
+def calcWeight(rep, items):
     weight = 0
     for i in range(0, len(items)):
         weight += rep[i] * items[i][0]
-    return weight % W_max
+    return weight
 
 
 def calcValue(rep, items):
+    W_max = np.round(np.sum(items, axis=0)[0] * 0.3, 1)  # max weight of knapsack
     value = 0
     for i in range(0, len(items)):
         value += rep[i] * items[i][1]
+    weight = calcWeight(rep, items)
+    if weight > W_max:
+        return 0
     return value
 
 
@@ -36,11 +40,11 @@ def generatePopulation(items, pop_size, W_max):
     population = []
 
     for i in range(0, pop_size):
-        rep = np.zeros(32, dtype=int)
-        while calcWeight(rep, items, W_max) < 0.7 * W_max:  # first representants not the best, only around 70% good
+        rep = np.zeros(32, dtype=int).tolist()
+        while calcWeight(rep, items) < 0.7 * W_max:  # first representants not the best, only around 70% good
             rep[np.random.randint(len(items))] = 1
-        population.append([calcValue(rep, items), rep])
-        # print(calcValue(rep, items))
+        population.append([0, rep])
+        # print(calcValue(rep, items), W_max)
     return population
 
 
