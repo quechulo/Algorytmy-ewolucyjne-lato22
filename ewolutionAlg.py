@@ -61,17 +61,26 @@ if __name__ == "__main__":
     items = generateItems(N)
     print(items)
 
-    population_reps = 75
-    numOfGen = 100
+    population_reps = 100
+    numOfGen = 500
     tournamentSize = 2
-    p_bar = 0.65
+    p_bar = 0.4
 
     W_max = np.round(np.sum(items, axis=0)[0] * 0.3, 1)  # max weight of knapsack
     print(W_max)
     population = generatePopulation(items, population_reps, W_max)
 
     population = findOpt(population, numOfGen, tournamentSize, p_bar)
+    bestOne = 0
+    bestKnapsack = []
     for el in population:
-        print(el[0]) # 586.0 best ever
+        actual = el[0]
+        if actual > bestOne:
+            bestOne = actual
+            bestKnapsack = el[1]
+        print(el[0]) # 659.0 best ever
+    print('#########  BEST  #########')
+    print(bestOne)
+    print(bestKnapsack)
 
 
