@@ -1,6 +1,7 @@
 import numpy as np
 
-np.random.seed(305862)  # lowest index
+INDEX = 305862
+np.random.seed(INDEX)  # lowest index
 
 
 def generatePopulation(N):
