@@ -1,5 +1,6 @@
 from generateData import generateItems, generatePopulation, calcValue
 import numpy as np
+import time
 
 N = 32
 
@@ -34,27 +35,52 @@ def doTournament(population, s):
     return population
 
 
-def binaryMutation(pop, p_bar):
+def binaryMutation(pop, p_bar, p_gen_type=.6):
     numOfItems = len(pop[0][1])
     # print(numOfItems)
-
     for el in pop:
         p = np.random.rand()
         if p >= p_bar:
             rep = np.zeros(numOfItems, dtype=int).tolist()
             for i in range(0, numOfItems):
-                rep[i] = (el[1][i] + 1) % 2
-            el[1] = rep
+                pp = np.random.rand()
+                if pp >= p_gen_type:
+                    rep[i] = 1
+                    el[1][i] = rep[i] ^ el[1][i]
     # print(pop)
     return pop
+    ## HARDCORE VERSION ##
+    # for el in pop:
+    #     p = np.random.rand()
+    #     if p >= p_bar:
+    #         rep = np.zeros(numOfItems, dtype=int).tolist()
+    #         for i in range(0, numOfItems):
+    #             rep[i] = (el[1][i] + 1) % 2
+    #         el[1] = rep
+    # print(pop)
+    # return pop
 
+def findBest(population):
+    bestOne = 0
+    bestKnapsack = []
+    for el in population:
+        actual = el[0]
+        if actual > bestOne:
+            bestOne = actual
+            bestKnapsack = el[1]
+    return [bestOne, bestKnapsack]
 
-def findOpt(population, numOfGen, tournamentSize, p_bar):
+def findOpt(population, numOfGen, tournamentSize, p_bar, p_gen_type):
+    theBest = [0, np.zeros(len(population[0][1]), dtype=int).tolist()]
     for _ in range(0, numOfGen):
         population = doTournament(population, tournamentSize).copy()
-        population = binaryMutation(population, p_bar).copy()
+        population = binaryMutation(population, p_bar, p_gen_type).copy()
         population = adjustValues(population)
-    return population
+        best = findBest(population)
+        if best[0] > theBest[0]:
+            theBest = best
+            # print(theBest)
+    return theBest
 
 if __name__ == "__main__":
     global items
@@ -64,23 +90,21 @@ if __name__ == "__main__":
     population_reps = 100
     numOfGen = 500
     tournamentSize = 2
-    p_bar = 0.4
+    p_bar = 0.6 # p-nstwo zdarzenia mutacji
+    p_gen_type = 0.4 # p-nstwo bardziej zroznicowanego genotypu
 
     W_max = np.round(np.sum(items, axis=0)[0] * 0.3, 1)  # max weight of knapsack
     print(W_max)
     population = generatePopulation(items, population_reps, W_max)
+    population = adjustValues(population)
+    print('first population:')
+    print(population)
 
-    population = findOpt(population, numOfGen, tournamentSize, p_bar)
-    bestOne = 0
-    bestKnapsack = []
-    for el in population:
-        actual = el[0]
-        if actual > bestOne:
-            bestOne = actual
-            bestKnapsack = el[1]
-        print(el[0]) # 659.0 best ever
-    print('#########  BEST  #########')
-    print(bestOne)
-    print(bestKnapsack)
+    best = []
+    best = findOpt(population, numOfGen, tournamentSize, p_bar, p_gen_type)
+    print(best)
+    print("best value:", best[0])
+    print("best knapsack:", best[1])
+
 
 
